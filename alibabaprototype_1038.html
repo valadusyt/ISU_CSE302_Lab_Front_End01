@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ISU Marketplace Prototype — Alibaba Style (index_1038.html)</title>
+
+  <!-- Bootstrap CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <style>
+    /* Minimal custom styling (single-file) */
+    :root{
+      --primary:#ff6a00;
+      --muted:#6b7280;
+      --card-radius:12px;
+    }
+    body{ background:#f4f6f8; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; }
+    .topbar{ background: linear-gradient(90deg,#ff7b1a,#ff4d4d); color:#fff; border-radius:10px; padding:24px; margin-bottom:20px; box-shadow:0 8px 30px rgba(11,10,20,0.06); }
+    .brand-badge{ width:56px;height:56px;border-radius:10px;background:rgba(255,255,255,0.12); display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff; }
+    .product-card{ border-radius:var(--card-radius); overflow:hidden; transition:transform .12s ease,box-shadow .12s ease; }
+    .product-card:hover{ transform:translateY(-6px); box-shadow:0 14px 40px rgba(11,10,20,0.08); }
+    .product-img{ width:100%; height:160px; object-fit:cover; background:#e9eef6; display:block; }
+    .small-muted{ color:var(--muted); font-size:.88rem; }
+    .price{ color:var(--primary); font-weight:700; font-size:1.05rem; }
+    .badge-cat{ font-size:.72rem; }
+    footer{ margin-top:36px; padding:24px 0; color:#6b7280; }
+    .search-bar{ max-width:640px; width:100%; }
+    @media (max-width:767px){
+      .topbar{ padding:16px; border-radius:8px; }
+      .product-img{ height:140px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <div class="brand-badge">ISU</div>
+        <div>
+          <div class="fw-bold">ISU Marketplace</div>
+          <div class="small-muted" style="font-size:.75rem">Alibaba-style Prototype — index_1038.html</div>
+        </div>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <form id="searchForm" class="ms-auto d-flex align-items-center gap-2" role="search">
+          <input id="searchInput" class="form-control search-bar" type="search" placeholder="Search products, sellers, categories..." aria-label="Search">
+          <select id="categorySelect" class="form-select" style="max-width:160px;">
+            <option value="">All categories</option>
+          </select>
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+
+        <ul class="navbar-nav ms-3">
+          <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Messages</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- HERO / TOP PROMO -->
+    <div class="topbar d-flex flex-column flex-md-row justify-content-between align-items-start">
+      <div>
+        <h2 class="mb-1">Buy smart — source globally</h2>
+        <p class="small-muted mb-3">Verified sellers, bulk pricing, and safe checkout. Explore categories, compare sellers, and place orders easily.</p>
+        <div class="d-flex gap-2">
+          <button class="btn btn-light" id="exploreBtn">Explore Categories</button>
+          <button class="btn btn-outline-light" id="sellBtn">Sell on ISU Marketplace</button>
+        </div>
+      </div>
+      <div class="text-end mt-3 mt-md-0">
+        <div class="small-muted">Top category</div>
+        <h4 class="mb-0">Electronics & Accessories</h4>
+        <div class="small-muted">Free shipping on selected items</div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- LEFT: Product Grid -->
+      <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h5 class="mb-0">Featured Products</h5>
+            <div class="small-muted">Trusted suppliers — instant quotes</div>
+          </div>
+          <div class="small-muted">Showing <span id="resultCount">0</span> products</div>
+        </div>
+
+        <!-- Filters row -->
+        <div class="card mb-3 p-3">
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <label class="small-muted mb-0">Price</label>
+              <input id="priceMin" type="number" class="form-control form-control-sm" placeholder="Min" style="width:100px;">
+              <input id="priceMax" type="number" class="form-control form-control-sm" placeholder="Max" style="width:100px;">
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <label class="small-muted mb-0">Sort</label>
+              <select id="sortSelect" class="form-select form-select-sm" style="width:160px;">
+                <option value="default">Recommended</option>
+                <option value="price-asc">Price: Low → High</option>
+                <option value="price-desc">Price: High → Low</option>
+                <option value="rating-desc">Rating: High → Low</option>
+              </select>
+            </div>
+
+            <div class="ms-auto">
+              <button id="resetFilters" class="btn btn-outline-secondary btn-sm">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-3" aria-label="Page navigation">
+          <ul id="pagination" class="pagination justify-content-center"></ul>
+        </nav>
+      </div>
+
+      <!-- RIGHT: Sidebar sellers & categories -->
+      <aside class="col-lg-4">
+        <div class="card p-3 mb-3 profile-card shadow-sm">
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:56px;height:56px;border-radius:10px;background:#eef7ff;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0b5cff">VS</div>
+            <div>
+              <div class="fw-bold">Vendor Showcase</div>
+              <div class="small-muted">Verified sellers & quick contact</div>
+            </div>
+          </div>
+          <hr/>
+          <div>
+            <div class="small-muted mb-2">Quick Categories</div>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-outline-secondary btn-sm quick-cat" data-cat="Electronics">Electronics</button>
+              <button class="btn btn-outline-secondary btn-sm quick-cat" data-cat="Computers">Computers</button>
+              <button class="btn btn-outline-secondary btn-sm quick-cat" data-cat="Fashion">Fashion</button>
+              <button class="btn btn-outline-secondary btn-sm quick-cat" data-cat="Furniture">Furniture</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-3 shadow-sm">
+          <div class="fw-bold mb-2">Top Sellers</div>
+          <div id="sellerList" class="list-group list-group-flush">
+            <!-- sellers by JS -->
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-bold">ISU Marketplace Prototype</div>
+          <div class="small-muted">Single-file prototype: index_1038.html • Built for ISU CSE302 Lab</div>
+        </div>
+        <div class="small-muted">© ISU 2025</div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- PRODUCT DETAILS MODAL -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="modalTitle" class="modal-title">Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button id="modalContactBtn" class="btn btn-primary">Contact Seller</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMBEDDED JSON DATASET -->
+  <script>
+    /* Embedded JSON for products & sellers (single-file) */
+    const DATA = {
+      "products": [
+        {"id":"p301","name":"Smartphone X Pro","price":699.00,"category":"Electronics","sellerId":"s1","rating":4.6,"stock":48,"image":"https://via.placeholder.com/600x400.png?text=Smartphone+X+Pro","description":"High-performance smartphone with 128GB storage, OLED display and multi-lens camera."},
+        {"id":"p302","name":"Wireless Earbuds B2","price":89.99,"category":"Electronics","sellerId":"s2","rating":4.4,"stock":0,"image":"https://via.placeholder.com/600x400.png?text=Wireless+Earbuds+B2","description":"Compact earbuds with active noise cancellation and long battery life."},
+        {"id":"p303","name":"15\" Gaming Laptop","price":1299.00,"category":"Computers","sellerId":"s1","rating":4.3,"stock":12,"image":"https://via.placeholder.com/600x400.png?text=Gaming+Laptop+15inch","description":"Powerful gaming laptop with dedicated GPU and fast cooling system."},
+        {"id":"p304","name":"Eco Cotton T-Shirt (Bulk)","price":18.00,"category":"Fashion","sellerId":"s3","rating":4.1,"stock":250,"image":"https://via.placeholder.com/600x400.png?text=Eco+Cotton+T-Shirt","description":"Sustainable, organic cotton shirts — available in bulk orders and multiple colors."},
+        {"id":"p305","name":"4K Action Camera","price":279.50,"category":"Electronics","sellerId":"s2","rating":4.6,"stock":7,"image":"https://via.placeholder.com/600x400.png?text=4K+Action+Camera","description":"Waterproof action camera with 4K60 recording and stabilization."},
+        {"id":"p306","name":"Ergonomic Office Chair","price":149.99,"category":"Furniture","sellerId":"s4","rating":4.2,"stock":30,"image":"https://via.placeholder.com/600x400.png?text=Ergonomic+Chair","description":"Adjustable chair with lumbar support and breathable mesh back."},
+        {"id":"p307","name":"USB-C Fast Charger (100W)","price":29.99,"category":"Electronics","sellerId":"s1","rating":4.5,"stock":180,"image":"https://via.placeholder.com/600x400.png?text=USB-C+Fast+Charger","description":"Rapid charger compatible with laptops, tablets and phones."},
+        {"id":"p308","name":"Classic Wooden Table","price":389.00,"category":"Furniture","sellerId":"s4","rating":4.0,"stock":8,"image":"https://via.placeholder.com/600x400.png?text=Wooden+Table","description":"Hand-crafted wooden dining table — solid wood and durable finish."},
+        {"id":"p309","name":"Noise-Cancelling Headphones","price":199.99,"category":"Electronics","sellerId":"s2","rating":4.7,"stock":34,"image":"https://via.placeholder.com/600x400.png?text=Noise-Cancelling+Headphones","description":"Over-ear headphones with premium sound and long battery life."}
+      ],
+      "sellers": [
+        {"id":"s1","name":"GadgetHub","location":"USA"},
+        {"id":"s2","name":"AudioWorld","location":"Germany"},
+        {"id":"s3","name":"EcoWear","location":"Bangladesh"},
+        {"id":"s4","name":"HomeCraft","location":"Canada"}
+      ]
+    };
+  </script>
+
+  <!-- APP JS: render UI from JSON -->
+  <script>
+    // Small helpers
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    // State
+    const PAGE_SIZE = 6;
+    let currentPage = 1;
+    let filtered = DATA.products.slice();
+
+    // Escape for safety
+    function esc(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+    // Render product card
+    function productCard(p){
+      const seller = DATA.sellers.find(s=>s.id===p.sellerId) || {name:'Unknown'};
+      const col = document.createElement('div');
+      col.className = 'col';
+      col.innerHTML = `
+        <div class="card product-card h-100">
+          <img src="${esc(p.image)}" alt="${esc(p.name)}" class="product-img">
+          <div class="p-3 d-flex flex-column" style="min-height:170px;">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">${esc(p.name)}</h6>
+                <div class="small-muted">${esc(p.category)} • Seller: ${esc(seller.name)}</div>
+              </div>
+              <div class="text-end">
+                <div class="price">$${p.price.toFixed(2)}</div>
+                <div class="small-muted">${p.rating.toFixed(1)} ★</div>
+              </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2 align-items-center">
+              <span class="badge bg-light text-dark badge-cat">${p.stock>0?'In stock':'Out of stock'}</span>
+              <span class="small-muted ms-2">${p.stock} unit(s)</span>
+            </div>
+
+            <div class="mt-auto d-flex gap-2">
+              <button class="btn btn-outline-primary btn-sm flex-fill" data-action="preview" data-id="${p.id}">Preview</button>
+              <button class="btn btn-primary btn-sm flex-fill" data-action="buy" data-id="${p.id}" ${p.stock>0?'':'disabled'}>Buy / Quote</button>
+            </div>
+          </div>
+        </div>
+      `;
+      return col;
+    }
+
+    // Render products for current page
+    function renderProducts(page=1){
+      const grid = $('#productsGrid');
+      grid.innerHTML = '';
+      const start = (page-1)*PAGE_SIZE;
+      const pageItems = filtered.slice(start, start+PAGE_SIZE);
+      if(pageItems.length===0){
+        grid.innerHTML = `<div class="col-12"><div class="card p-4 text-center small-muted">No products found. Try different filters.</div></div>`;
+      } else {
+        pageItems.forEach(p => grid.appendChild(productCard(p)));
+      }
+      $('#resultCount').textContent = filtered.length;
+      renderPagination(Math.ceil(filtered.length/PAGE_SIZE), page);
+    }
+
+    // Pagination
+    function renderPagination(pageCount, active){
+      const ul = $('#pagination');
+      ul.innerHTML = '';
+      if(pageCount<=1) return;
+      for(let i=1;i<=pageCount;i++){
+        const li = document.createElement('li');
+        li.className = 'page-item' + (i===active ? ' active' : '');
+        li.innerHTML = `<a href="#" class="page-link" data-page="${i}">${i}</a>`;
+        ul.appendChild(li);
+      }
+    }
+
+    // Sellers list render
+    function renderSellers(){
+      const list = $('#sellerList');
+      list.innerHTML = '';
+      DATA.sellers.forEach(s=>{
+        const count = DATA.products.filter(p=>p.sellerId===s.id).length;
+        const el = document.createElement('div');
+        el.className = 'list-group-item d-flex justify-content-between align-items-start';
+        el.innerHTML = `<div><div class="fw-semibold">${esc(s.name)}</div><div class="small-muted">${esc(s.location)}</div></div><div class="small-muted">${count} items</div>`;
+        list.appendChild(el);
+      });
+    }
+
+    // Apply filters/search/sort
+    function applyFilters({query='', category='', priceMin=null, priceMax=null, sort='default'} = {}){
+      const q = (query||'').trim().toLowerCase();
+      filtered = DATA.products.filter(p=>{
+        const matchesQ = q === '' || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q);
+        const matchesCat = !category || p.category === category;
+        const matchesMin = priceMin == null || p.price >= priceMin;
+        const matchesMax = priceMax == null || p.price <= priceMax;
+        return matchesQ && matchesCat && matchesMin && matchesMax;
+      });
+
+      // Sorting
+      if(sort === 'price-asc') filtered.sort((a,b)=>a.price - b.price);
+      else if(sort === 'price-desc') filtered.sort((a,b)=>b.price - a.price);
+      else if(sort === 'rating-desc') filtered.sort((a,b)=>b.rating - a.rating);
+
+      currentPage = 1;
+      renderProducts(currentPage);
+    }
+
+    // Modal show
+    function showModal(productId){
+      const p = DATA.products.find(x=>x.id===productId);
+      if(!p) return;
+      const seller = DATA.sellers.find(s=>s.id===p.sellerId) || {name:'Unknown', location:''};
+      $('#modalTitle').textContent = p.name;
+      $('#modalBody').innerHTML = `
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <img src="${esc(p.image)}" alt="${esc(p.name)}" class="img-fluid rounded">
+          </div>
+          <div class="col-md-6">
+            <p class="small-muted">Category: <strong>${esc(p.category)}</strong></p>
+            <p class="small-muted">Seller: <strong>${esc(seller.name)}</strong> — ${esc(seller.location)}</p>
+            <p class="small-muted">Price: <strong>$${p.price.toFixed(2)}</strong></p>
+            <p class="small-muted">Rating: ${p.rating.toFixed(1)} ★</p>
+            <p class="small-muted">${p.stock>0 ? p.stock + ' unit(s) available' : 'Out of stock'}</p>
+            <hr/>
+            <p>${esc(p.description)}</p>
+          </div>
+        </div>
+      `;
+      const bs = bootstrap.Modal.getOrCreateInstance(document.getElementById('productModal'));
+      bs.show();
+
+      // wire contact button
+      $('#modalContactBtn').onclick = () => {
+        alert('Contacting seller ' + seller.name + ' (prototype)');
+      };
+    }
+
+    // Init: populate categories and event bindings
+    function init(){
+      renderSellers();
+
+      // Fill category select from data
+      const cats = Array.from(new Set(DATA.products.map(p=>p.category)));
+      const sel = $('#categorySelect');
+      cats.forEach(c=>{
+        const opt = document.createElement('option'); opt.value=c; opt.textContent=c; sel.appendChild(opt);
+      });
+
+      // Quick categories buttons
+      $$('.quick-cat').forEach(btn=>{
+        btn.addEventListener('click', ()=> {
+          const cat = btn.dataset.cat;
+          $('#categorySelect').value = cat;
+          applyFilters({query: $('#searchInput').value, category: cat, priceMin: parseFloat($('#priceMin').value) || null, priceMax: parseFloat($('#priceMax').value) || null, sort: $('#sortSelect').value});
+        });
+      });
+
+      // Delegated clicks for product buttons
+      document.addEventListener('click', (e)=>{
+        const btn = e.target.closest('button');
+        if(!btn) return;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if(action === 'preview') showModal(id);
+        else if(action === 'buy') alert('Buy/Request Quote (prototype) for product: ' + id);
+      });
+
+      // Pagination click
+      $('#pagination').addEventListener('click', (e)=>{
+        const a = e.target.closest('a[data-page]');
+        if(!a) return;
+        e.preventDefault();
+        const p = parseInt(a.dataset.page,10);
+        if(!isNaN(p)){ currentPage = p; renderProducts(p); }
+      });
+
+      // Search form
+      $('#searchForm').addEventListener('submit', (e)=>{
+        e.preventDefault();
+        applyFilters({
+          query: $('#searchInput').value,
+          category: $('#categorySelect').value,
+          priceMin: parseFloat($('#priceMin').value) || null,
+          priceMax: parseFloat($('#priceMax').value) || null,
+          sort: $('#sortSelect').value
+        });
+      });
+
+      // Sort & reset & price inputs
+      $('#sortSelect').addEventListener('change', ()=> {
+        applyFilters({
+          query: $('#searchInput').value,
+          category: $('#categorySelect').value,
+          priceMin: parseFloat($('#priceMin').value) || null,
+          priceMax: parseFloat($('#priceMax').value) || null,
+          sort: $('#sortSelect').value
+        });
+      });
+      $('#resetFilters').addEventListener('click', ()=>{
+        $('#searchInput').value = '';
+        $('#categorySelect').value = '';
+        $('#priceMin').value = '';
+        $('#priceMax').value = '';
+        $('#sortSelect').value = 'default';
+        applyFilters({});
+      });
+
+      // Initial render
+      applyFilters({});
+    }
+
+    // Kick off
+    init();
+  </script>
+
+  <!-- Bootstrap JS (bundle includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

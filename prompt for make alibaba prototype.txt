@@ -1,0 +1,43 @@
+Build a single-file web application prototype based on Alibaba.com, named index_1038.html (1038 = last 4 digits of my ISU ID).
+
+Requirements:
+
+Use only HTML, CSS (inline or <style>), JS (inside <script>), JSON, and Bootstrap (via CDN).
+
+Do not use external JS/CSS files.
+
+Use Bootstrap grid and components for a professional layout.
+
+Use JSON objects/lists (embedded) to dynamically generate product cards and categories.
+
+Include Navbar (with logo text "Alibaba Clone", search bar, category dropdown, login/cart links).
+
+Include Hero Banner (full-width section with call-to-action text/buttons).
+
+Include Product Categories Section (cards or icons for categories like Electronics, Fashion, Machinery, etc.).
+
+Include Product Grid Section (4-column grid on desktop, 2-column on tablet, 1-column on mobile).
+
+Add Filters (category dropdown & price range filter) and Search (filter products by name dynamically).
+
+Include Modal Popup that shows product details when a product card is clicked (render details from JSON).
+
+Include Footer (links like About, Contact, Help, etc.).
+
+Make it fully responsive using Bootstrap breakpoints.
+
+Write modular, readable JavaScript for filtering, searching, and modal handling.
+
+Use responsible, smart AI-generated text and images (like product names, descriptions, prices).
+
+Keep layout clean, professional, and close to Alibaba’s marketplace style but simplified.
+
+Everything must be in one HTML file only.
+
+Deliverables:
+
+Complete index_1038.html file.
+
+README.md file describing technologies used, features, and instructions to run.
+
+(Optional) A browser snapshot (PNG) to show final UI.
